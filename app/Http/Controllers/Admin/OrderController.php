@@ -9,7 +9,7 @@ use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+use App\Notifications\OrderStatusUpdated;
 class OrderController extends Controller
 {
     public function __construct(protected OrderService $orderService) {}
@@ -42,6 +42,7 @@ class OrderController extends Controller
             'source'         => $request->source, // whatsapp, phone_call, admin
         ], $request->items);
 
+
         return redirect()->route('admin.orders.show', $order)
             ->with('status', 'Commande créée avec succès.');
     }
@@ -57,6 +58,9 @@ class OrderController extends Controller
         }
 
         $order->update($data);
+        if ($order->user) {
+    $order->user->notify(new OrderStatusUpdated($order));
+}
 
         // TODO : notification temps réel au client (module suivant)
 

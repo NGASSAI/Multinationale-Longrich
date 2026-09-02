@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\CommentModerationController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Admin\StatsController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/inscription', [AuthController::class, 'showRegister'])->name('register');
@@ -107,4 +109,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
         Route::get('/chat/{conversation}', [ChatController::class, 'show'])->name('chat.show');
     });
+});
+
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/count', [NotificationController::class, 'unreadCount'])->name('count');
+    Route::patch('/{id}/lu', [NotificationController::class, 'markAsRead'])->name('read');
+    Route::patch('/tout-lire', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+});
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/statistiques', [StatsController::class, 'index'])->name('stats.index');
 });

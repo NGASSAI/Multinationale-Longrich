@@ -2,13 +2,14 @@
 
 
 namespace App\Http\Controllers\Client;
-
+use App\Notifications\NewOrderNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreOrderRequest;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\User;
 
 class OrderController extends Controller
 {
@@ -36,6 +37,10 @@ class OrderController extends Controller
                 'notes'          => $request->notes,
                 'source'         => 'website',
             ], $request->items);
+            $admins = User::role('admin')->get();
+foreach ($admins as $admin) {
+    $admin->notify(new NewOrderNotification($order));
+}
 
             // TODO : notification temps réel à l'admin (module suivant)
 
@@ -54,4 +59,4 @@ class OrderController extends Controller
             'order' => $order->load('items'),
         ]);
     }
-}   
+}

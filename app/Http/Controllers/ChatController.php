@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMessageRequest;
 use App\Models\Conversation;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Notifications\NewMessageNotification;
 
 class ChatController extends Controller
 {
@@ -67,6 +68,13 @@ class ChatController extends Controller
         $conversation->update(['last_message_at' => now()]);
 
         broadcast(new MessageSent($message))->toOthers();
+
+
+// Notifie le destinataire (celui qui n'a pas envoyé le message)
+$recipient = $user->id === $conversation->client_id ? $conversation->admin : $conversation->client;
+if ($recipient) {
+    $recipient->notify(new NewMessageNotification($message));
+}
 
         return response()->json(['message' => $message->load('sender:id,name,avatar')]);
     }
