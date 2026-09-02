@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# Installation des dépendances système (libpq-dev est requis pour PostgreSQL)
+# Installation des dépendances système nécessaires pour PostgreSQL et la gestion des images
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installation des extensions PHP requises par Laravel et PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql pgsql mbstring exts xml gd
+RUN docker-php-ext-install pdo pdo_pgsql pgsql gd bcmath
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -32,7 +32,7 @@ RUN composer install --no-dev --optimize-autoloader
 # Ajustement des permissions pour les dossiers de stockage et de cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Exposition du port (Render définit dynamiquement la variable $PORT)
+# Exposition du port
 EXPOSE 8000
 
 # Commande de démarrage avec migration automatique de la base de données
