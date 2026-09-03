@@ -51,12 +51,12 @@ foreach ($admins as $admin) {
         }
     }
 
-    public function show(Order $order)
-    {
-        abort_if($order->user_id !== Auth::id(), 403);
+   public function show(Order $order)
+{
+    $this->authorize('view', $order);
 
-        return Inertia::render('Client/Orders/Show', [
-            'order' => $order->load('items'),
-        ]);
-    }
+    return Inertia::render('Client/Orders/Show', [
+        'order' => $order->load('items'),
+    ]);
+}
 }

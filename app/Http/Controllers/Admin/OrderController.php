@@ -10,6 +10,7 @@ use App\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Notifications\OrderStatusUpdated;
+use App\Models\ActivityLog;
 class OrderController extends Controller
 {
     public function __construct(protected OrderService $orderService) {}
@@ -58,6 +59,7 @@ class OrderController extends Controller
         }
 
         $order->update($data);
+        ActivityLog::record('order_status_changed', "Commande {$order->order_number} → {$request->status}");
         if ($order->user) {
     $order->user->notify(new OrderStatusUpdated($order));
 }

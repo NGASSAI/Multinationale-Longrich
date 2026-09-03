@@ -53,6 +53,8 @@ class ChatController extends Controller
     public function sendMessage(StoreMessageRequest $request, Conversation $conversation)
     {
         $user = Auth::user();
+        $this->authorize('view', $conversation);
+    
 
         abort_if(
             $conversation->client_id !== $user->id && !$user->hasRole('admin'),

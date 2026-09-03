@@ -28,7 +28,7 @@ class StatsController extends Controller
         ]);
     }
 
-    private function summary($from): array
+private function summary(\Illuminate\Support\Carbon $from): array
     {
         $paidOrders = Order::where('payment_status', 'paid')->where('created_at', '>=', $from);
 

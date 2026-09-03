@@ -9,7 +9,7 @@ use App\Models\Product;
 use App\Services\ProductImageService;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-
+use App\Models\ActivityLog;
 class ProductController extends Controller
 {
     public function __construct(protected ProductImageService $imageService) {}
@@ -54,7 +54,7 @@ class ProductController extends Controller
         foreach ($product->images as $image) {
             \Storage::disk('public')->delete($image->path);
         }
-
+ActivityLog::record('product_deleted', "Produit supprimé : {$product->name}");
         $product->delete();
 
         return back()->with('status', 'Produit supprimé.');

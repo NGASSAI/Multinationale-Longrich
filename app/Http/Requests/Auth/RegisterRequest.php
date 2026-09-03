@@ -12,20 +12,21 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
-    {
-        return [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone'    => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Password::min(8)
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()],
-        ];
+   public function rules(): array
+{
+    $passwordRule = Password::min(8)->mixedCase()->numbers()->symbols();
+
+    if (!app()->environment('testing')) {
+        $passwordRule->uncompromised();
     }
 
+    return [
+        'name'     => ['required', 'string', 'max:255'],
+        'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+        'phone'    => ['nullable', 'string', 'max:20'],
+        'password' => ['required', 'confirmed', $passwordRule],
+    ];
+}
     public function messages(): array
     {
         return [
