@@ -19,6 +19,7 @@ use App\Http\Controllers\SuperAdmin\AdminManagementController;
 use App\Http\Controllers\SuperAdmin\SettingsController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', fn () => \Inertia\Inertia::render('Home'))->name('home');
 // ==================== AUTH (invités uniquement) ====================
 Route::middleware("guest")->group(function () {
     Route::get("/inscription", [AuthController::class, "showRegister"])->name("register");
